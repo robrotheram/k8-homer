@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: k8-homer
-          image: ghcr.io/robrotheram/k8-homer:latest
+          image: ghcr.io/robrotheram/k8-homer:main
           volumeMounts:
             - name: config-volume
               mountPath: /app/template.yml
