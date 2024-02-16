@@ -55,7 +55,3 @@ This project is licensed under the [MIT License](LICENSE).
 ## Acknowledgements
 
 K8-Homer is built upon the foundation provided by [Bastien Wirtz's Homer](https://github.com/bastienwirtz/homer). We extend our gratitude to the contributors and maintainers of Homer for their excellent work.
-
-## Contact
-
-For questions or further assistance, feel free to reach out to the project maintainer at [maintainer@example.com](mailto:maintainer@example.com).
