@@ -1,0 +1,94 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8-homer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: k8-homer
+  template:
+    metadata:
+      labels:
+        app: k8-homer
+    spec:
+      containers:
+        - name: k8-homer
+          image: ghcr.io/robrotheram/k8-homer:latest
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/template.yml
+              subPath: template.yml
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "128Mi"
+              cpu: "100m"
+      volumes:
+        - name: config-volume
+          configMap:
+            name: k8-homer-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: k8-homer
+spec:
+  selector:
+    app: k8-homer
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: ingress-reader
+rules:
+  - apiGroups: ["extensions", "networking.k8s.io"]
+    resources: ["ingresses"]
+    verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: read-ingress-global
+subjects:
+  - kind: ServiceAccount
+    name: k8-homer
+    namespace: default
+roleRef:
+  kind: ClusterRole
+  name: ingress-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: k8-homer
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: k8-homer-config
+data:
+  template.yml: |
+    title: ""
+    subtitle: ""
+    header: true
+    footer: '<p>Created with <span class="has-text-danger">❤️</span> with <a href="https://bulma.io/">bulma</a>, <a href="https://vuejs.org/">vuejs</a> & <a href="https://fontawesome.com/">font awesome</a> // Fork me on <a href="https://github.com/bastienwirtz/homer"><i class="fab fa-github-alt"></i></a></p>' # set false if you want to hide it.
+    footer: ''
+    links:
+      - name: ""
+        url: ""
+    services:
+      - name: "system"
+        icon: "fas fa-chart-area"
+        
+      - name: "dev"
+        icon: "fas fa-code"
